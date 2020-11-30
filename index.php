@@ -32,7 +32,7 @@
 <html lang="ja">
     <head>
         <meta charset="UTF-8">
-        <title>タイトル</title>
+        <title>新しいタイトル</title>
     </head>
     <body>
         <form action="index.php" method="POST">
