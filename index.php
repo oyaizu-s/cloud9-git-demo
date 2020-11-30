@@ -16,7 +16,7 @@
         $result = "";
 
         if (6 <= $hour && $hour < 12) {
-            $result = "おはよう";
+            $result = "おはようございます";
         }
         elseif (12 <= $hour && $hour < 18) {
             $result = "こんにちは";
