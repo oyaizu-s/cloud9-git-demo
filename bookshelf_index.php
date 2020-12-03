@@ -32,9 +32,9 @@
         move_uploaded_file($_FILES['add_book_image']['tmp_name'], $image_path);
 
         // データベースに書籍を新規登録する
-        $sql = 'INSERT INTO books (title, image_url, status) VALUES(?, ?, "unread")';
+        $sql = 'INSERT INTO books (title, image_url, status, memo) VALUES(?, ?, "unread", ?)';
         $statement = mysqli_prepare($database, $sql);
-        mysqli_stmt_bind_param($statement, 'ss', $_POST['add_book_title'], $image_path);
+        mysqli_stmt_bind_param($statement, 'sss', $_POST['add_book_title'], $image_path, $_POST['add_book_memo']);
         mysqli_stmt_execute($statement);
         mysqli_stmt_close($statement);
     }
@@ -61,6 +61,16 @@
         $sql = 'UPDATE books SET status="finished" WHERE id=?';
         $statement = mysqli_prepare($database, $sql);
         mysqli_stmt_bind_param($statement, 'i', $_POST['book_id']);
+        mysqli_stmt_execute($statement);
+        mysqli_stmt_close($statement);
+    }
+    
+    // メモ更新の処理
+    if (array_key_exists('submit_book_memo', $_POST)) {
+        // 読了へ変更
+        $sql = 'UPDATE books SET memo=? WHERE id=?';
+        $statement = mysqli_prepare($database, $sql);
+        mysqli_stmt_bind_param($statement, 'si', $_POST['add_book_memo'], $_POST['book_id']);
         mysqli_stmt_execute($statement);
         mysqli_stmt_close($statement);
     }
@@ -163,6 +173,7 @@
                             $title = $record['title'];
                             $image_url = $record['image_url'];
                             $status = $record['status'];
+                            $memo = $record['memo'];
 ?>
                     <div class="book_item">
                         <div class="book_image">
@@ -184,17 +195,26 @@
                                     <input type="submit" name="submit_book_finished" value="読了">
                                 </div>
                             </form>
-                            <div class="memo">
-                                <p>
-                                    メモが入りますメモが入りますメモが入りますメモが入ります
-                                </p>
-                            </div>
                             <form action="bookshelf_index.php" method="post">
                                 <input type="hidden" name="book_id" value="<?php print h($id); ?>">
-                                <div class="book_delete">
-                                  <input type="submit" name="submit_book_delete" value="削除する"><img src="images/icon_trash.png" alt="icon trash">
+                                <div class="memo">
+                                    <p>
+                                        <input type="text" name="add_book_memo" value="<?php print h($memo); ?>" placeholder="メモを入力">
+                                        <input type="submit" name="submit_book_memo" value="更新">
+                                    </p>
                                 </div>
                             </form>
+                            <div class="sub">
+                                <div class="memo_edit">
+                                <a href="./bookshelf_form.php">編集する</a>
+                                </div>
+                                <form action="bookshelf_index.php" method="post">
+                                    <input type="hidden" name="book_id" value="<?php print h($id); ?>">
+                                    <div class="book_delete">
+                                      <input type="submit" name="submit_book_delete" value="削除する"><img src="images/icon_trash.png" alt="icon trash">
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
 <?php
