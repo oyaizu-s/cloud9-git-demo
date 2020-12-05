@@ -67,17 +67,16 @@
     
     // メモ更新の処理
     if (array_key_exists('submit_book_memo', $_POST)) {
-        // 読了へ変更
         $sql = 'UPDATE books SET memo=? WHERE id=?';
         $statement = mysqli_prepare($database, $sql);
-        mysqli_stmt_bind_param($statement, 'si', $_POST['add_book_memo'], $_POST['book_id']);
+        mysqli_stmt_bind_param($statement, 'si', $_POST['edit_book_memo'], $_POST['book_id']);
         mysqli_stmt_execute($statement);
         mysqli_stmt_close($statement);
     }
     
     // データ削除の処理
     if (array_key_exists('submit_book_delete', $_POST)) {
-        $sql = 'DELETE FROM books WHERE id=?';                            // 実行するSQLを作成
+        $sql = 'DELETE FROM books WHERE id=?';                       // 実行するSQLを作成
         $statement = mysqli_prepare($database, $sql);                // セキュリティ対策をする
         mysqli_stmt_bind_param($statement, 'i', $_POST['book_id']);  // id=?の?の部分に代入する
         mysqli_stmt_execute($statement);                             // SQL文を実行する
@@ -195,19 +194,18 @@
                                     <input type="submit" name="submit_book_finished" value="読了">
                                 </div>
                             </form>
-                            <form action="bookshelf_index.php" method="post">
-                                <input type="hidden" name="book_id" value="<?php print h($id); ?>">
                                 <div class="memo">
                                     <p>
-                                        <input type="text" name="add_book_memo" value="<?php print h($memo); ?>" placeholder="メモを入力">
-                                        <input type="submit" name="submit_book_memo" value="更新">
+                                        <?php print h($memo); ?>
                                     </p>
                                 </div>
-                            </form>
                             <div class="sub">
-                                <div class="memo_edit">
-                                <a href="./bookshelf_form.php">編集する</a>
-                                </div>
+                                <form action="bookshelf_memo.php" method="get">
+                                    <input type="hidden" name="book_id" value="<?php print h($id); ?>">
+                                    <div class="memo_edit">
+                                     <input type="submit" name="submit_book_edit" value="編集する">
+                                    </div>
+                                </form>
                                 <form action="bookshelf_index.php" method="post">
                                     <input type="hidden" name="book_id" value="<?php print h($id); ?>">
                                     <div class="book_delete">
